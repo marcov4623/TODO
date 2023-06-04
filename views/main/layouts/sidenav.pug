@@ -1,0 +1,32 @@
+aside.main-sidebar.sidebar-dark-primary.elevation-4.sidebar-no-expand
+	// Brand Logo
+	a.brand-link(href="/")
+		span.brand-text.font-weight-light TODO
+
+	// Sidebar
+	.sidebar
+		// Sidebar Menu
+		nav.mt-2
+			ul.nav.nav-pills.nav-sidebar.flex-column(data-widget="treeview", role="menu", data-accordion="false")
+				// Add icons to the links using the .nav-icon class
+				// with font-awesome or any other icon font library
+				li.nav-item
+					a.nav-link#btnManage.active(href="/")
+						i.nav-icon.fas.fa-th
+						p Manage
+						// span.right.badge.badge-danger New
+				li.nav-item
+					a.nav-link#btnDump(href="/?deleted=1")
+						i.nav-icon.fas.fa-dumpster.text-maroon
+						p Soft Deleted
+						// span.right.badge.badge-danger New
+				li.nav-item
+					a.nav-link#btnAddTask(href="#")
+						i.nav-icon.fas.fa-plus.text-success
+						p Add New
+						// span.right.badge.badge-danger New
+				li.nav-item
+					a.nav-link#btnConfig(href="/config")
+						i.nav-icon.fas.fa-wrench.text-lightblue
+						p Configuration
+						// span.right.badge.badge-danger New

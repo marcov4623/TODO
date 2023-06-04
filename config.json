@@ -1,0 +1,6 @@
+{
+  "dbhost": "localhost",
+  "dbuser": "root",
+  "dbpassword": "password",
+  "dbname": "db_task"
+}

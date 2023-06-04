@@ -1,0 +1,143 @@
+doctype html
+html(lang="en")
+	head
+		meta(charset="utf-8")
+		meta(name="viewport", content="width=device-width, initial-scale=1")
+		title TODO
+		include layouts/css.pug
+		style(type="text/css").
+			@media only screen and (max-width: 600px) {
+				.hideOnMobile {
+					display:none!important;
+				}
+			}
+
+			tr.trTableLoader{
+				display:none;
+				transition : all 2s ease-in-out;
+			}
+
+			.table-loader {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100px;
+			}
+
+			.table-loader .spinner-border {
+				color: #007bff; /* Adjust color as needed */
+			}
+			a.btnPager.btn.disabled{
+				cursor:not-allowed!important;
+				pointer-events: all!important
+			}
+		
+	body(class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed sidebar-collapse")
+		.wrapper
+			// Preloader
+			.preloader.flex-column.justify-content-center.align-items-center
+				i.fas.fa-list.animation__wobble(style="font-size:40px" height="60", width="60")
+
+			// Navbar
+			include layouts/navigation.pug
+
+			// Main Sidebar Container
+			include layouts/sidenav.pug
+
+			// Content Wrapper. Contains page content
+			.content-wrapper
+				// Content Header (Page header)
+				.content-header
+					.container-fluid
+						.row.mb-2
+							.col-sm-6
+								h1.m-0 Configuration
+							.col-sm-6
+								ol.breadcrumb.float-sm-right
+									li.breadcrumb-item
+										a(href="#") TODO
+									li.breadcrumb-item.active Configurations
+
+				// Main content
+				section.content
+					.container-fluid
+						.card
+							.card-header
+								h1.card-title Configuration
+							.card-body
+								form#frmConfig(autocomplete=false)
+									.form-group
+										label(for="dbhost") Database Host
+										input#dbhost.form-control.required(type="text" name="dbhost" value=config.dbhost)
+									.form-group
+										label(for="dbuser") Database Username
+										input#dbuser.form-control.required(type="text" name="dbuser" value=config.dbuser)
+									.form-group
+										label(for="dbpassword") Database Password
+										input#dbpassword.form-control.required(type="text" name="dbpassword" value=config.dbpassword)
+									.form-group
+										label(for="dbname") Database Name
+										input#dbname.form-control(type="text" value=config.dbname disabled=true)
+							.card-footer
+								button.btn.btn-primary.btnSaveConfig(type="submit") Save
+
+	// Main Footer
+	include layouts/footer.pug
+	// REQUIRED SCRIPTS
+	include layouts/js.pug
+	script.
+		$(document).ready(()=>{
+			$('#btnConfig').parents('ul').find('li a').removeClass('active');
+			$('#btnConfig').addClass('active');
+			
+			//========================================
+			//Global Variables Here
+			//========================================
+			
+			//========================================
+			//Event Listeners here
+			//========================================
+			$('.btnSaveConfig').click(function(e){
+				e.preventDefault();
+				//get save data
+				let frmData = new FormData($('#frmConfig').get(0));
+				//validate fields
+				validateFields($('#frmConfig'),function(validated){
+
+					if(validated=="NO") return;
+					//reset page count
+					$.ajax({
+						'type':'POST',
+						'url':'/config',
+						'data':frmData,
+						'processData':false,
+						'contentType':false
+					}).done((data)=>{
+						if(data.error) return toastr.error(data.error);
+						setTimeout(function(){location.reload();},1000);
+						return toastr.success('Configuration Saved Successfully! Page will reload...');
+					});
+				});
+			})
+			
+			//========================================
+			//Generic Functions Here
+			//========================================
+			function validateFields(form,cb){
+				var count =form.find('.required').length;
+				var result = 'YES';
+				form.find('.required').each(function(index){
+					var item = $(this);
+					item.parents('.form-group').find('.requiredMessage').remove();
+					if(!item.val() && item.is(':visible') ){
+						result='NO';
+						item.parents('.form-group').append(`<small class='requiredMessage text-white'>*This field is required!</small>`);
+						item.focus();
+					}
+					if(parseInt(count) == parseInt(index+1)){
+						console.log(result)
+						return cb(result) ;
+					}
+				});
+			}
+		})
